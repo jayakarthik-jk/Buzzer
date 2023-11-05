@@ -5,8 +5,39 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Create Group">
   <Background>
-    <main>
-      <h1>Join</h1>
+    <main class="min-h-full flex justify-center items-center">
+      <button
+        id="selected-user-container"
+        class="bg-blue-400 h-36 w-36 rounded-full flex justify-center items-center text-white disabled:bg-blue-300"
+      ></button>
     </main>
   </Background>
 </Layout>
+
+<script>
+  const evt = new EventSource("/api/join");
+  const button = document.getElementById("selected-user-container");
+  if (!button) {
+    throw new Error("Container not found");
+  }
+  evt.onmessage = function (event) {
+    if (event.data === "null") {
+      button.innerHTML = "Click to buzz";
+      button.removeAttribute("disabled");
+    } else {
+      button.innerHTML = `${event.data}`;
+      // disable button
+      button.setAttribute("disabled", "disabled");
+    }
+  };
+  button.onclick = async function () {
+    try {
+      await fetch("/api/click-buzzer", {
+        method: "POST",
+        body: JSON.stringify({ userId: "1" }),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+</script>

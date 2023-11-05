@@ -1,11 +1,13 @@
 ---
+import * as userStore from "./store";
 const stream = new TransformStream();
 const writer = stream.writable.getWriter();
 const encoder = new TextEncoder();
 
-setInterval(() => {
-  writer.write(encoder.encode(`data: ${Date.now()}\n\n`));
-}, 1000);
+writer.write(encoder.encode(`data: ${userStore.selectedUserId}\n\n`));
+userStore.onUserChange((user) => {
+  writer.write(encoder.encode(`data: ${JSON.stringify(user)}\n\n`));
+});
 
 return new Response(stream.readable, {
   status: 200,
