@@ -1,7 +1,32 @@
 ---
+import Background from "../layouts/Background.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Welcome to Astro.">
-  <main>hello world</main>
+  <Background>
+    <nav
+      class="relative flex justify-center items-center h-20 border-b border-pink-400 rounded-b-lg overflow-hidden shadow-lg"
+    >
+      <div class="absolute blur-effect h-full w-full bg-white opacity-60"></div>
+      <span class="font-bold text-3xl tracking-widest text-blue-400 z-[1]"
+        >Buzzer</span
+      >
+    </nav>
+    <main
+      class="flex flex-col sm:flex-row gap-3 justify-center items-center min-h-[calc(100svh-6rem)]"
+    >
+      <a
+        href="/create"
+        class="flex w-36 h-36 bg-pink-400 rounded-3xl justify-center items-center text-white shadow-lg"
+      >
+        Create Group
+      </a>
+      <a
+        href="/join"
+        class="flex w-36 h-36 bg-blue-400 rounded-3xl justify-center items-center text-white shadow-lg"
+        >Join Group</a
+      >
+    </main>
+  </Background>
 </Layout>
