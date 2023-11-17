@@ -1,12 +1,64 @@
 ---
-import Background from "../layouts/Background.astro";
 import Layout from "../layouts/Layout.astro";
+import * as store from "./api/store";
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    let duration = data.get("duration") ? Number(data.get("duration")) : 15;
+    let sleep = data.get("sleep") ? Number(data.get("sleep")) : 15;
+
+    if (isNaN(duration) || !store.groupDurationsInMinute.includes(duration)) {
+      throw new Error("Invalid duration");
+    }
+    if (isNaN(sleep) || !store.buzzerSleepTimesInSecond.includes(sleep)) {
+      throw new Error("Invalid sleep time");
+    }
+
+    const group = store.createGroup({
+      groupDurationInMinute: Number(duration),
+      buzzerSleepTimeInSecond: Number(sleep),
+    });
+
+    return Astro.redirect(`/group-panel?id=${group.id}`);
+  } catch (error) {
+    console.log(error);
+  }
+}
 ---
 
 <Layout title="Create Group">
-  <Background>
-    <main>
-      <h1>Create</h1>
-    </main>
-  </Background>
+  <form method="post" class="flex flex-col gap-4">
+    <h1 class="font-bold mb-3 text-2xl tracking-wide">Group Creation</h1>
+    <label class="flex justify-between gap-3 text-base font-medium text-black">
+      Group Durations
+      <select
+        name="duration"
+        id="duration"
+        class="gray-50 text-sm w-40 rounded-lg p-2.5 bg-white placeholder-gray-400 text-black"
+      >
+        <option value="15">15 mins</option>
+        <option value="30">30 mins</option>
+        <option value="60">60 mins</option>
+      </select>
+    </label>
+    <label class="flex justify-between gap-3 text-base font-medium text-black">
+      Buzzer Sleep
+      <select
+        name="sleep"
+        id="sleep"
+        class="gray-50 text-sm w-40 rounded-lg p-2.5 bg-white placeholder-gray-400 text-black"
+      >
+        <option value="15">15 seconds</option>
+        <option value="30">30 seconds</option>
+        <option value="60">60 seconds</option>
+      </select>
+    </label>
+    <button
+      type="submit"
+      class="bg-black hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg"
+    >
+      Create Group
+    </button>
+  </form>
 </Layout>

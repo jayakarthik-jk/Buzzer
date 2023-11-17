@@ -1,17 +1,12 @@
 ---
-import Background from "../layouts/Background.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Create Group">
-  <Background>
-    <main class="min-h-full flex justify-center items-center">
-      <button
-        id="selected-user-container"
-        class="bg-blue-400 h-36 w-36 rounded-full flex justify-center items-center text-white disabled:bg-blue-300"
-      ></button>
-    </main>
-  </Background>
+  <button
+    id="selected-user-container"
+    class="bg-blue-400 h-36 w-36 rounded-full flex justify-center items-center text-white disabled:bg-blue-300"
+  ></button>
 </Layout>
 
 <script>

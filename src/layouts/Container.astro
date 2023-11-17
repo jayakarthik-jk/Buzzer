@@ -1,0 +1,14 @@
+---
+import { twMerge as cn } from "tailwind-merge";
+
+const className = Astro.props.className as string | undefined;
+---
+
+<main
+  class={cn(
+    "flex flex-col sm:flex-row gap-3 justify-center items-center min-h-[calc(100svh-6rem)]",
+    className
+  )}
+>
+  <slot />
+</main>

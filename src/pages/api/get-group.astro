@@ -1,0 +1,26 @@
+---
+import * as store from "./store";
+import { z } from "zod";
+
+if (Astro.request.method !== "POST") {
+  return new Response("method not allowed", { status: 405 });
+}
+try {
+  const body = await Astro.request.json();
+  const result = z.object({ id: z.string() }).safeParse(body);
+
+  if (!result.success) {
+    return new Response(result.error.errors[0]?.message, { status: 400 });
+  }
+  const groupId = result.data.id;
+
+  const groupInfo = store.getGroupById(groupId);
+  if (!groupInfo) {
+    return new Response("group not found", { status: 404 });
+  }
+
+  return new Response(JSON.stringify(groupInfo), { status: 200 });
+} catch (error) {
+  return new Response("internal server error", { status: 500 });
+}
+---

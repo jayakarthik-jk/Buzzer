@@ -1,13 +1,33 @@
 ---
-import * as userStore from "./store";
+import * as store from "./store";
 const stream = new TransformStream();
-const writer = stream.writable.getWriter();
+const writter = stream.writable.getWriter();
 const encoder = new TextEncoder();
 
-writer.write(encoder.encode(`data: ${userStore.selectedUserId}\n\n`));
-userStore.onUserChange((user) => {
-  writer.write(encoder.encode(`data: ${JSON.stringify(user)}\n\n`));
+const params = new URL(Astro.request.url).searchParams;
+const groupId = params.get("groupId");
+let username = params.get("username");
+const type = params.get("type") as "panel" | null;
+
+if (!groupId) {
+  return new Response("groupId is required", { status: 400 });
+}
+if (!username) {
+  if (type !== "panel") {
+    return new Response("username is required", { status: 400 });
+  }
+  username = "panel";
+}
+
+const user = store.createUser(username, (username) => {
+  writter.write(encoder.encode(`data: ${username}\n\n`));
 });
+
+const info = store.joinGroup({ groupId, user });
+
+if (info === "Group not found") {
+  return new Response(info, { status: 404 });
+}
 
 return new Response(stream.readable, {
   status: 200,
